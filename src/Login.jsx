@@ -3,7 +3,7 @@ import model from "./directives/model";
 import http from "./http";
 import { createStore } from "solid-js/store";
 import createHttpRequest from "./signals/http";
-import { createEffect } from "solid-js";
+import { Switch, createEffect } from "solid-js";
 
 const signIn = createHttpRequest(async (credentials) => http.post("/auth/local", credentials));
 
@@ -25,7 +25,13 @@ function Login() {
 
     return (
         <>
-            <Show when={signIn.loading()}>
+            {`State: `}
+            <Switch fallback={<span>Nothing happened yet</span>}>
+                <Match when={signIn.state() === "loading"}>Loading...</Match>
+                <Match when={signIn.state() === "error"}>{signIn.error()?.message}</Match>
+                <Match when={signIn.state() === "success"}>success</Match>
+            </Switch>
+            {/* <Show when={signIn.loading()}>
                 <div className="loader fixed">Loading</div>
             </Show>
             <Show when={signIn.error()}>
@@ -33,7 +39,7 @@ function Login() {
             </Show>
             <Show when={signIn.response()}>
                 <div className="loader fixed">Great</div>
-            </Show>
+            </Show> */}
             <form class="grid grid-flow-row grid-cols-1 gap-6 mt-6 w-full">
                 <div class="field grid grid-flow-row gap-1">
                     <label class="font-bold">E-mail</label>
