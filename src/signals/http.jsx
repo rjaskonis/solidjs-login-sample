@@ -16,15 +16,16 @@ function createHttpRequest(asyncCall) {
             setResponse(response?.data);
             setState("success");
         } catch (e) {
+            console.log(e, e.response?.data ? e.response?.data?.error : e.message || e);
             setResponse(null);
-            setError(e.response?.data?.error || e.message || e);
+            setError(e.response?.data ? e.response?.data?.error : e.message || e);
             setState("error");
         } finally {
             setLoading(false);
         }
     }
 
-    return Object.assign(request, { state, response, loading, setLoading, error, setError });
+    return Object.assign(request, { state, setState, response, loading, setLoading, error, setError });
 }
 
 export default createHttpRequest;

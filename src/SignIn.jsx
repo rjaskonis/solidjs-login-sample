@@ -4,22 +4,31 @@ import http from "./http";
 import { createStore } from "solid-js/store";
 import createHttpRequest from "./signals/http";
 import { Switch, createEffect } from "solid-js";
+import { useNavigate } from "@solidjs/router";
 
 const signIn = createHttpRequest(async (credentials) => http.post("/auth/local", credentials));
 
-function Login() {
+function SignIn() {
     const credentialsStore = createStore({ identifier: "rjaskonis@gmail.com", password: "abc123" });
     const [credentials] = credentialsStore;
+    const navigate = useNavigate();
 
     createEffect(() => {
         if (signIn.error()) {
-            setTimeout(() => signIn.setError(), 3000);
+            setTimeout(() => {
+                signIn.setState();
+                signIn.setError();
+            }, 3000);
         }
     });
 
     createEffect(() => {
-        if (signIn.response()) {
+        if (signIn.state() === "success" && signIn.response()) {
             localStorage.setItem("access_token", signIn.response().jwt);
+
+            setTimeout(() => {
+                navigate("/", { replace: true });
+            }, 1000);
         }
     });
 
@@ -28,7 +37,7 @@ function Login() {
             {`State: `}
             <Switch fallback={<span>Nothing happened yet</span>}>
                 <Match when={signIn.state() === "loading"}>Loading...</Match>
-                <Match when={signIn.state() === "error"}>{signIn.error()?.message}</Match>
+                <Match when={signIn.state() === "error"}>{`error: ${signIn.error()?.message || signIn.error()}`}</Match>
                 <Match when={signIn.state() === "success"}>success</Match>
             </Switch>
             {/* <Show when={signIn.loading()}>
@@ -62,4 +71,4 @@ function Login() {
     );
 }
 
-export default Login;
+export default SignIn;

@@ -17,18 +17,16 @@ export default function model(el, getParams) {
         const [store, ...targetKey] = params;
         const [storeObject, setStore] = store;
 
-        const value = getStoreKeyValue(storeObject, targetKey);
-
         switch (el.type) {
             case "checkbox": {
-                createRenderEffect(() => (el.checked = value));
+                createRenderEffect(() => (el.checked = getStoreKeyValue(storeObject, targetKey)));
 
                 el.addEventListener("input", (e) => setStore(...targetKey, e.target.checked));
 
                 break;
             }
             default: {
-                createRenderEffect(() => (el.value = value));
+                createRenderEffect(() => (el.value = getStoreKeyValue(storeObject, targetKey)));
 
                 el.addEventListener("input", (e) => setStore(...targetKey, e.target.value));
             }

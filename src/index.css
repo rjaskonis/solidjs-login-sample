@@ -8,5 +8,9 @@ body,
 }
 
 #root {
-    @apply grid place-content-center;
+    @apply p-2;
+}
+
+a {
+    @apply text-blue-950 hover:text-blue-900;
 }
